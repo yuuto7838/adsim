@@ -14,4 +14,4 @@ Gemini APIを利用して、毎回異なる商材・クライアントが登場�
 - Google Gemini API (1.5 Flash / 2.5 Flash)
 
 ## 開発者
-Numao Yuto with Google DeepMind Agent
+Developed with Google DeepMind Agent
