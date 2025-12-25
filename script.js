@@ -275,7 +275,12 @@ function renderApiKeyModal() {
                 <h2>API Keyの設定</h2>
                 <p>Gemini APIキーを入力してスタート</p>
                 <input type="password" id="api-key-input" placeholder="AIzaSy..." style="width:100%; padding:0.8rem; margin: 1rem 0; box-sizing:border-box; background:rgba(0,0,0,0.3); color:white; border:1px solid var(--border-color); border-radius:6px;">
-                <button class="btn-primary" onclick="saveApiKey()">開始する</button>
+                <div style="display:flex; gap:1rem; justify-content:center;">
+                    <button class="btn-primary" onclick="saveApiKey()">開始する</button>
+                </div>
+                <div style="margin-top:1rem; font-size:0.85rem;">
+                    <span style="color:var(--accent-primary); cursor:pointer; text-decoration:underline;" onclick="setModal('API_GUIDE')">APIキーの取得方法はこちら</span>
+                </div>
             </div>
         </div>
     `;
@@ -405,6 +410,20 @@ function renderModal() {
                 <p>おすすめフィードによる拡散力が高い。クリエイティブの鮮度が重要で、摩耗が早い。10代〜20代向けや、視覚的インパクトの強い商材に強い。</p>
             </div>
         `;
+    } else if (state.modal === 'API_GUIDE') {
+        content = `
+            <h2>Gemini APIキーの取得方法</h2>
+            <div style="text-align:left; font-size:0.9rem; line-height:1.6;">
+                <ol style="padding-left:1.5rem; margin-bottom:1.5rem;">
+                    <li><a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent-primary); text-decoration:underline;">Google AI Studio</a> にアクセスします。</li>
+                    <li>Googleアカウントでログインします。</li>
+                    <li>画面左上の <strong>"Get API key"</strong> をクリックします。</li>
+                    <li><strong>"Create API key"</strong> ボタンを押します。</li>
+                    <li>生成されたキーをコピーして、このゲームの入力欄に貼り付けてください。</li>
+                </ol>
+                <p style="font-size:0.8rem; color:var(--text-secondary);">※ 利用は無料枠の範囲内で可能です。</p>
+            </div>
+        `;
     }
 
     return `
@@ -516,19 +535,34 @@ function renderChat() {
 
 function render() {
     const app = document.getElementById('app');
-    if (state.view === 'API_KEY') { app.innerHTML = renderApiKeyModal(); return; }
-    if (state.view === 'LOADING') { app.innerHTML = renderLoading(); return; }
-    if (state.view === 'BRIEF') { app.innerHTML = renderHeader() + renderBrief(); return; }
-    if (state.view === 'CHALLENGE') { app.innerHTML = renderChallenge(); return; }
+    let content = '';
 
-    app.innerHTML = `
-        ${renderHeader()}
-        ${renderModal()}
-        <div class="grid-main">
-            <div>${renderDashboard()}${state.view === 'RESULT' ? renderDetailedStats() : ''}</div>
-            ${renderActionPanel()}
-        </div>
-    `;
+    if (state.view === 'API_KEY') {
+        content = renderApiKeyModal();
+    } else if (state.view === 'LOADING') {
+        content = renderLoading();
+    } else if (state.view === 'BRIEF') {
+        content = renderHeader() + renderBrief();
+    } else if (state.view === 'CHALLENGE') {
+        content = renderChallenge();
+    } else if (state.view === 'GAME_CLEAR') {
+        content = renderGameClear();
+    } else {
+        content = `
+            ${renderHeader()}
+            <div class="grid-main">
+                <div>${renderDashboard()}${state.view === 'RESULT' ? renderDetailedStats() : ''}</div>
+                ${renderActionPanel()}
+            </div>
+        `;
+    }
+
+    // Always append modal if it exists (Overlay on top of whatever view)
+    if (state.modal) {
+        content += renderModal();
+    }
+
+    app.innerHTML = content;
 }
 
 function renderDashboard() {
