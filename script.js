@@ -13,7 +13,7 @@ const state = {
 };
 
 // --- GenAI Integration ---
-const GEMINI_MODEL = "gemini-3-flash";
+const GEMINI_MODEL = "gemini-2.5-flash";
 
 async function callGemini(prompt, isJson = false) {
     if (!state.apiKey) return null;
